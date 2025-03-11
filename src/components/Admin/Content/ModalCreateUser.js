@@ -2,12 +2,21 @@ import { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { FcPlus } from "react-icons/fc";
+import { toast } from "react-toastify";
+import { postCreateNewUser } from "../../../services/apiService";
 
-const ModalCreateUser = () => {
-  const [show, setShow] = useState(false);
+const ModalCreateUser = (props) => {
+  const { show, setShow } = props;
 
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const handleClose = () => {
+    setShow(false);
+    setEmail("");
+    setPassword("");
+    setUsername("");
+    setRole("USER");
+    setImage("");
+    setPreviewImage("");
+  };
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,11 +33,52 @@ const ModalCreateUser = () => {
       // setPreviewImage("");
     }
   };
+
+  const validateEmail = (email) => {
+    return String(email)
+      .toLowerCase()
+      .match(
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      );
+  };
+
+  const handSubmitCreateUser = async () => {
+    //goi api khong gui file
+    // let data = {
+    //   email: email,
+    //   password: password,
+    //   username: username,
+    //   role: role,
+    //   userImage: image,
+    // };
+    // alert("Click me");
+
+    //validate
+    const isValidateEmail = validateEmail(email);
+    if (!isValidateEmail) {
+      toast.error("Invalid email");
+      return;
+    }
+    if (!password) {
+      toast.error("Invalid password");
+      return;
+    }
+    let data = await postCreateNewUser(email, password, username, role, image);
+    console.log(">>> check res", data);
+    if (data && data.EC === 0) {
+      toast.success(data.EM);
+      handleClose();
+      await props.fetchListUsers();
+    }
+    if (data && data.EC !== 0) {
+      toast.error(data.EM);
+    }
+  };
   return (
     <>
-      <Button variant="primary" onClick={handleShow}>
+      {/* <Button variant="primary" onClick={handleShow}>
         Launch demo modal
-      </Button>
+      </Button> */}
 
       <Modal
         show={show}
@@ -41,50 +91,50 @@ const ModalCreateUser = () => {
           <Modal.Title>Add new user</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <form class="row g-3">
-            <div class="col-md-6">
-              <label for="inputEmail4" class="form-label">
+          <form className="row g-3">
+            <div className="col-md-6">
+              <label htmlFor="inputEmail4" className="form-label">
                 Email
               </label>
               <input
                 type="email"
-                class="form-control"
+                className="form-control"
                 id="inputEmail4"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
               />
             </div>
-            <div class="col-md-6">
-              <label for="inputPassword4" class="form-label">
+            <div className="col-md-6">
+              <label htmlFor="inputPassword4" className="form-label">
                 Password
               </label>
               <input
                 type="password"
-                class="form-control"
+                className="form-control"
                 id="inputPassword4"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
               />
             </div>
 
-            <div class="col-md-6">
-              <label for="inputCity" class="form-label">
+            <div className="col-md-6">
+              <label htmlFor="inputCity" className="form-label">
                 Username
               </label>
               <input
                 type="text"
-                class="form-control"
+                className="form-control"
                 id="inputCity"
                 value={username}
                 onChange={(event) => setUsername(event.target.value)}
               />
             </div>
-            <div class="col-md-4">
-              <label for="inputState" class="form-label">
+            <div className="col-md-4">
+              <label htmlFor="inputState" className="form-label">
                 Role
               </label>
               <select
-                class="form-select"
+                className="form-select"
                 value={role}
                 onChange={(event) => setRole(event.target.value)}
               >
@@ -92,8 +142,8 @@ const ModalCreateUser = () => {
                 <option value="ADMIN">ADMIN</option>
               </select>
             </div>
-            <div class="col-12">
-              <label class="form-label lable-upload" htmlFor="labelUpload">
+            <div className="col-12">
+              <label className="form-label lable-upload" htmlFor="labelUpload">
                 <FcPlus /> Upload File Image
               </label>
               <input
@@ -103,7 +153,7 @@ const ModalCreateUser = () => {
                 onChange={(event) => handleUploadImage(event)}
               />
             </div>
-            <div class="col-12 img-preview">
+            <div className="col-12 img-preview">
               {previewImage ? (
                 <img src={previewImage} />
               ) : (
@@ -116,7 +166,7 @@ const ModalCreateUser = () => {
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="primary" onClick={handleClose}>
+          <Button variant="primary" onClick={() => handSubmitCreateUser()}>
             Save
           </Button>
         </Modal.Footer>

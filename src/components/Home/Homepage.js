@@ -5,7 +5,7 @@ const Homepage = () => {
       <video autoPlay muted loop>
         <source src={videoHomepage} type="video/mp4" />
       </video>
-      <di className="homepage-content">
+      <div className="homepage-content">
         <div className="title-1">
           Get to know your customers with forms worth filling out
         </div>
@@ -16,7 +16,7 @@ const Homepage = () => {
         <div className="title-3">
           <button>Get's started. It's free</button>
         </div>
-      </di>
+      </div>
     </div>
   );
 };
