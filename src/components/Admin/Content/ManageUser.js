@@ -6,14 +6,17 @@ import { useEffect, useState } from "react";
 import { getAllUser } from "../../../services/apiService";
 import ModalUpdateUser from "./ModalUpdateUser";
 import ModalViewUser from "./ModalViewUser";
+import ModalDeleteUser from "./ModalDeleteUser";
 
 const ManageUser = (props) => {
   const [showModalCreateUser, setShowModalCreateUser] = useState(false);
   const [showModalUpdateUser, setShowModalUpdateUser] = useState(false);
   const [showModalViewUser, setShowModalViewUser] = useState(false);
+  const [showModalDeleteUser, setShowModalDeleteUser] = useState(false);
 
   const [dataUpdate, setDataUpdate] = useState({});
   const [dataView, setDataView] = useState({});
+  const [dataDelete, setDataDelete] = useState({});
 
   // const handleShowHide = (value) => {
   //   setShowModalCreateUser(value);
@@ -41,6 +44,11 @@ const ManageUser = (props) => {
     setDataView(user);
   };
 
+  const handleClickDelete = (user) => {
+    setShowModalDeleteUser(true);
+    setDataDelete(user);
+  };
+
   const resetUpdateData = () => {
     setDataUpdate({});
   };
@@ -48,6 +56,10 @@ const ManageUser = (props) => {
   const resetViewData = () => {
     setDataView({});
   };
+
+  // const resetDataDelete = () => {
+  //   setDataDelete({});
+  // };
   return (
     <div className="manage-user-container">
       <div className="title">Manage User</div>
@@ -65,6 +77,7 @@ const ManageUser = (props) => {
             listUser={listUser}
             handleClickBtnUpdate={handleClickBtnUpdate}
             handleClickBtnView={handleClickBtnView}
+            handleClickDelete={handleClickDelete}
           />
         </div>
         <ModalCreateUser
@@ -86,6 +99,12 @@ const ManageUser = (props) => {
           dataView={dataView}
           fetchListUsers={fetchListUsers}
           resetViewData={resetViewData}
+        />
+        <ModalDeleteUser
+          show={showModalDeleteUser}
+          setShow={setShowModalDeleteUser}
+          dataDelete={dataDelete}
+          // resetDataDelete={resetDataDelete}
         />
       </div>
     </div>
