@@ -19,7 +19,9 @@ const ModalDeleteUser = (props) => {
     if (res?.EC === 0) {
       setShow(false);
       toast.success(res.EM);
-      fetchListUsers();
+      // fetchListUsers();
+      props.setCurrentPage(1);
+      await props.fetchListUsersWithPaginate(1);
     } else {
       toast.error(res.EM);
     }
